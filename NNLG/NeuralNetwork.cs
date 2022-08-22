@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NNLG
 {
@@ -18,7 +15,32 @@ namespace NNLG
             CreateHiddenLayers();
             CreateOutputLayer();
         }
-        public double FeedForward(List<double> inputSignals)
+        public Neuron FeedForward(List<double> inputSignals)
+        {
+           SendSignalsToInputNeurons(inputSignals);
+           FeedForwardAllLayersAsterInput();
+            if (Topology.OutputCount == 1)
+            {
+                return Layers.Last().Neurons[0];
+            }
+            else
+            {
+                return Layers.Last().Neurons.OrderByDescending(n=>n.Output).First();
+            }
+        }
+        private void FeedForwardAllLayersAsterInput()
+        {
+            for (int i = 1; i < Layers.Count; i++)
+            {
+                var layer = Layers[i];
+                var previousLayerSignals = Layers[i - 1].GetSignals();
+                foreach (var neuron in layer.Neurons)
+                {
+                    neuron.FeedForward(previousLayerSignals);
+                }
+            }
+        }
+        private void SendSignalsToInputNeurons(List<double> inputSignals)
         {
             for (int i = 0; i < inputSignals.Count; i++)
             {

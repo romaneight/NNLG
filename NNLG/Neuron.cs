@@ -18,7 +18,14 @@ namespace NNLG
         {
             var sum = 0.0;
             for (int i = 0; i < inputs.Count; i++) sum += inputs[i] * Weights[i];
-            Output = Sigmoid(sum);
+            if (NeuronType != NeuronType.Input)
+            {
+                Output = Sigmoid(sum);
+            }
+            else
+            {
+                Output = sum;
+            }
             return Output;
         }
         private double Sigmoid(double x)
@@ -29,6 +36,13 @@ namespace NNLG
         public override string ToString()
         {
             return Output.ToString();
+        }
+        public void SetWeghts(params double[] weights)
+        {//TODO: erase it 
+            for(int i=0; i<weights.Length; i++)
+            {
+                Weights[i] = weights[i];
+            }
         }
     
     }
